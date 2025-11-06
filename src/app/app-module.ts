@@ -9,25 +9,25 @@ import { Login } from './auth/login/login';
 import { FormsModule } from '@angular/forms';
 import { provideApollo } from 'apollo-angular';
 import { InMemoryCache, HttpLink } from '@apollo/client/core';
+import { Dashboard } from './dashboard/dashboard';
+import { GraphQLModule } from './apollo.config';
 
 @NgModule({
   declarations: [
     App,
     Signup,
-    Login
+    Login,
+    Dashboard
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    GraphQLModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideApollo(() => ({
-      link: new HttpLink({ uri: 'http://localhost:4000/graphql' }),
-      cache: new InMemoryCache(),
-    })),
   ],
   bootstrap: [App]
 })

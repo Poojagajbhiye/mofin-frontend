@@ -1,21 +1,31 @@
+import { provideApollo } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { inject, NgModule } from '@angular/core';
+import { ApolloClientOptions, ApolloLink, InMemoryCache } from '@apollo/client/core';
+import { environment } from '../environments/environment.development';
 import { setContext } from '@apollo/client/link/context';
-import { createHttpLink, InMemoryCache, ApolloClient } from '@apollo/client/core';
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
-});
+export function createApollo(): ApolloClientOptions<any> {
+  const uri = environment.apiUrl;
+  const httpLink = inject(HttpLink);
 
-const authLink = setContext((_, context: any) => {
-  const token = localStorage.getItem('token');
+  const authLink: ApolloLink = setContext((_) => {
+    const token = localStorage.getItem('token') || '';
+    console.log("TOKEN: ", token);
+    return {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+    };
+  });
+
   return {
-    headers: {
-      ...(context.headers || {}),
-      Authorization: token ? `Bearer ${token}` : '',
-    },
+    link: ApolloLink.from([authLink, httpLink.create({ uri })]),
+    cache: new InMemoryCache(),
   };
-});
+}
 
-export const apolloClient = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+@NgModule({
+  providers: [provideApollo(createApollo)],
+})
+export class GraphQLModule {}

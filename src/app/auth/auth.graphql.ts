@@ -31,3 +31,14 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
+export const ME_QUERY = gql`
+  query Me {
+    me {
+      id
+      name
+      email
+      role
+      parentId
+    }
+  }
+`;

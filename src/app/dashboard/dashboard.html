@@ -1,0 +1,54 @@
+<div class="dashboard-container">
+  <h2>Welcome, {{ user?.data?.name }}</h2>
+
+  <!-- ADMIN (MAIN ACCOUNT) VIEW -->
+  <div *ngIf="user?.role === 'admin'">
+    <h3>Pending Requests</h3>
+
+    <div *ngIf="!requests.length" class="empty">No requests yet.</div>
+
+    <div class="request-card" *ngFor="let req of requests">
+      <div>
+        <strong>{{ req.type | titlecase }}</strong> — {{ req.month }} {{ req.year }}
+      </div>
+      <div>Status: {{ req.status }}</div>
+      <div class="actions" *ngIf="req.status === 'pending'">
+        <button (click)="approve(req.id)">Approve</button>
+        <button (click)="reject(req.id)" class="danger">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB-ACCOUNT VIEW -->
+  <div *ngIf="user?.role === 'member'">
+    <h3>My Requests</h3>
+
+    <form (ngSubmit)="createNewRequest()" class="create-request">
+      <label>Type:</label>
+      <select [(ngModel)]="newRequest.type" name="type" required>
+        <option value="expense">Expense</option>
+        <option value="saving">Saving</option>
+        <option value="investment">Investment</option>
+      </select>
+
+      <label>Year:</label>
+      <input type="number" [(ngModel)]="newRequest.year" name="year" required />
+
+      <label>Month:</label>
+      <input type="text" [(ngModel)]="newRequest.month" name="month" required />
+
+      <label>Data (JSON):</label>
+      <textarea [(ngModel)]="newRequest.dataRaw" name="data" required></textarea>
+
+      <button type="submit">Submit Request</button>
+    </form>
+
+    <div *ngIf="requests.length">
+      <h4>Previous Requests</h4>
+      <div class="request-card" *ngFor="let req of requests">
+        <div><strong>{{ req.type | titlecase }}</strong> — {{ req.month }} {{ req.year }}</div>
+        <div>Status: {{ req.status }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { gql } from '@apollo/client/core';
 import { map } from 'rxjs/operators';
-import { LOGIN_MUTATION, REGISTER_MUTATION } from '../../auth/auth.graphql';
+import { LOGIN_MUTATION, REGISTER_MUTATION, ME_QUERY } from '../../auth/auth.graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -55,5 +55,14 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  getCurrentUser() {
+    return this.apollo
+      .watchQuery<any>({
+        query: ME_QUERY,
+        fetchPolicy: 'network-only', // ensures fresh data
+      })
+      .valueChanges
   }
 }
