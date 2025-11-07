@@ -3,6 +3,7 @@ import { AuthService } from '../core/services/auth.service';
 import { DashboardService } from './dashboard.service';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../core/models/user.model';
+import { Expenses } from '../core/models/expenses.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +15,7 @@ export class Dashboard {
   user!: User | null;
   public currentUser$ = new BehaviorSubject<User|null>(null);
   requests: any[] = [];
+  expenses!: Expenses | null;
 
   newRequest = {
     type: 'expense',
@@ -29,6 +31,7 @@ export class Dashboard {
       next: (resp) => {
         console.log("USER: ", resp);
         this.currentUser$.next(resp);
+        this.getExpenses();
         this.loadRequests();
       },
       error: (err) => {
@@ -71,5 +74,18 @@ export class Dashboard {
     } catch {
       alert('Invalid JSON format in data field.');
     }
+  }
+
+  getExpenses() {
+    this.dashboardService
+      .getExpenses(this.user?.role === 'admin' ? this.user.id : this.user?.parentId!, 2025)
+      .subscribe({
+        next: (result) => {
+          this.expenses = result;
+        },
+        error: (err) => {
+          console.log(`Error while getting expenses\n${err}`);
+        }
+      });
   }
 }

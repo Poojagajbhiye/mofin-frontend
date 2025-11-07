@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { GET_EXPENSES_QUERY } from './dashboard.graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -97,5 +98,15 @@ export class DashboardService {
       `,
       variables: { requestId },
     });
+  }
+
+  getExpenses(userId: string, year: Number): Observable<any> {
+    return this.apollo
+      .watchQuery({
+        query: GET_EXPENSES_QUERY,
+        variables: { userId, year },
+        fetchPolicy: 'no-cache',
+      })
+      .valueChanges.pipe(map((res: any) => res.data.getExpenses));
   }
 }

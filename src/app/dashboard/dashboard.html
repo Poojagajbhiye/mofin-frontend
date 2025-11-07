@@ -1,6 +1,11 @@
 <div class="dashboard-container">
   <h2>Welcome, {{ user?.name }}</h2>
 
+  <!-- COMMON VIEW -->
+  <div>
+    <h3>Expenses</h3>
+  </div>
+
   <!-- ADMIN (MAIN ACCOUNT) VIEW -->
   <div *ngIf="user?.role === 'admin'">
     <h3>Pending Requests</h3>
