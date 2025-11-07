@@ -63,6 +63,6 @@ export class AuthService {
         query: ME_QUERY,
         fetchPolicy: 'network-only', // ensures fresh data
       })
-      .valueChanges
+      .valueChanges.pipe(map((result) => result.data.me));
   }
 }

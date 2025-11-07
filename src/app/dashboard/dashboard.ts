@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
 import { DashboardService } from './dashboard.service';
 import { BehaviorSubject } from 'rxjs';
+import { User } from '../core/models/user.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,8 +11,8 @@ import { BehaviorSubject } from 'rxjs';
   styleUrl: './dashboard.scss'
 })
 export class Dashboard {
-  user: any;
-  public currentUser$ = new BehaviorSubject<any>(null);
+  user!: User | null;
+  public currentUser$ = new BehaviorSubject<User|null>(null);
   requests: any[] = [];
 
   newRequest = {
@@ -28,6 +29,7 @@ export class Dashboard {
       next: (resp) => {
         console.log("USER: ", resp);
         this.currentUser$.next(resp);
+        this.loadRequests();
       },
       error: (err) => {
         console.log("ERR: ", err);
@@ -37,14 +39,10 @@ export class Dashboard {
 
     this.currentUser$.subscribe((user) => {
       this.user = user;
-      console.log('user var after subscription: ', user['data']['me']['name']);
     });
-
-    this.loadRequests();
   }
 
   loadRequests() {
-    console.log(this.user);
     if (this.user?.role === 'admin') {
       this.dashboardService.getRequests().subscribe((res) => (this.requests = res));
     } else {
